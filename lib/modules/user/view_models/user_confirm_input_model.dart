@@ -3,8 +3,9 @@ import 'package:cuidapet_api/application/helpers/request_mapping.dart';
 class UserConfirmInputModel extends RequestMapping {
   int userId;
   String accessToken;
-  late String iosDeviceToken;
-  late String androidDeviceToken;
+  late String? iosDeviceToken;
+  late String? androidDeviceToken;
+
   UserConfirmInputModel(
       {required this.userId, required this.accessToken, required String data})
       : super(data);
