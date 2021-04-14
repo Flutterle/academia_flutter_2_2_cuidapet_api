@@ -37,6 +37,7 @@ class AuthController {
       User user;
 
       if (!loginViewModel.socialLogin) {
+        loginViewModel.loginEmailValidate();
         user = await userService.loginWithEmailPassword(loginViewModel.login,
             loginViewModel.password!, loginViewModel.supplierUser);
       } else {
