@@ -56,7 +56,7 @@ class AuthController {
           {'access_token': JwtHelper.generateJWT(user.id!, user.supplierId)}));
     } on RequestValidationException catch (e) {
       return Response(400, body:
-          jsonEncode({'errors': jsonEncode(e.errors)}));
+          jsonEncode({'errors': e.errors}));
     } on UserNotfoundException {
       return Response.forbidden(
           jsonEncode({'message': 'Usuário ou senha inváldos'}));
