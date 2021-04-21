@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:cuidapet_api/application/exceptions/request_validation_exception.dart';
 import 'package:cuidapet_api/application/exceptions/user_exists_exception.dart';
 import 'package:cuidapet_api/application/exceptions/user_notfound_exception.dart';
 import 'package:cuidapet_api/application/helpers/jwt_helper.dart';
@@ -36,15 +37,17 @@ class AuthController {
       User user;
 
       if (!loginViewModel.socialLogin) {
+        loginViewModel.loginEmailValidate();
         user = await userService.loginWithEmailPassword(loginViewModel.login,
-            loginViewModel.password, loginViewModel.supplierUser);
+            loginViewModel.password!, loginViewModel.supplierUser);
       } else {
+        loginViewModel.loginSocialValidate();
         // Social Login (Facebook, google, apple, etc...)
         user = await userService.loginWithSocial(
             loginViewModel.login,
             loginViewModel.avatar,
-            loginViewModel.socialType,
-            loginViewModel.socialKey);
+            loginViewModel.socialType!,
+            loginViewModel.socialKey!);
       }
 
       return Response.ok(jsonEncode(
@@ -52,6 +55,9 @@ class AuthController {
     } on UserNotfoundException {
       return Response.forbidden(
           jsonEncode({'message': 'Usuário ou senha inváldos'}));
+    } on RequestValidationException catch (e) {
+      return Response(400, body:
+          jsonEncode({'errors': e.errors}));
     } catch (e, s) {
       log.error('Erro ao fazer login', e, s);
       return Response.internalServerError(
