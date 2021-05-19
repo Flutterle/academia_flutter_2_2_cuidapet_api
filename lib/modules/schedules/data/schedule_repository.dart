@@ -22,13 +22,13 @@ class ScheduleRepository implements IScheduleRepository {
   });
 
   @override
-  Future<void> save(Schedule schedule) async {
+  Future<int> save(Schedule schedule) async {
     MySqlConnection? conn;
 
     try {
       conn = await connection.openConnection();
-      await conn.transaction((_) async {
-        final result = await conn!.query('''
+      await conn.transaction((conn) async {
+        final result = await conn.query('''
           insert into
             agendamento(data_agendamento, usuario_id, fornecedor_id, status, nome, nome_pet) 
           values(

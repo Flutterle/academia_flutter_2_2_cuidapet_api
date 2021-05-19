@@ -123,22 +123,40 @@ class SupplierController {
   Future<Response> update(Request request) async {
     try {
       final supplier = int.tryParse(request.headers['supplier'] ?? '');
-      
+
       if (supplier == null) {
         return Response(400,
-            body: jsonEncode({'message': 'código fornecedor não pode ser nulo'}));
+            body:
+                jsonEncode({'message': 'código fornecedor não pode ser nulo'}));
       }
-      
+
       final model = SupplierUpdateInputModel(
           supplierId: supplier, dataRequest: await request.readAsString());
-      
+
       final supplierResponse = await service.update(model);
-      
+
       return Response.ok(_supplierMapper(supplierResponse));
     } catch (e, s) {
       log.error('Erro ao atualizar fornecedor', e, s);
       return Response.internalServerError();
     }
+  }
+
+  @Route.get('/user')
+  Future<Response> findByToken(Request request) async {
+    final supplierId = int.tryParse(request.headers['supplier'] ?? '');
+
+    if(supplierId == null) {
+      return Response(400, body: jsonEncode({'message': 'Usuário não é um fornecedor'}));
+    }
+
+    final supplier = await service.findById(supplierId);
+
+    if (supplier == null) {
+      return Response.ok(jsonEncode({}));
+    }
+
+    return Response.ok(_supplierMapper(supplier));
   }
 
   String _supplierMapper(Supplier supplier) {
