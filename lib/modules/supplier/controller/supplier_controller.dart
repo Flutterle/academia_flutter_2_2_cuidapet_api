@@ -158,5 +158,29 @@ class SupplierController {
     });
   }
 
+  @Route.get('/user/logged')
+  Future<Response> findSupplierByUserLogged(Request request) async {
+    try {
+      final supplier = int.tryParse(request.headers['supplier'] ?? '');
+      
+      if (supplier == null) {
+        return Response(400,
+            body: jsonEncode({'message': 'Usuário não é um fornecedor'}));
+      }
+      
+      final supplierResponse = await service.findById(supplier);
+      
+      if(supplierResponse == null) {
+        return Response(204);
+      }
+
+      return Response.ok(_supplierMapper(supplierResponse));
+      
+    } catch (e, s) {
+      log.error('Erro ao atualizar fornecedor', e, s);
+      return Response.internalServerError();
+    }
+  }
+
   Router get router => _$SupplierControllerRouter(this);
 }
