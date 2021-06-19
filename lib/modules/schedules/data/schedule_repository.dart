@@ -22,7 +22,7 @@ class ScheduleRepository implements IScheduleRepository {
   });
 
   @override
-  Future<int> save(Schedule schedule) async {
+  Future<void> save(Schedule schedule) async {
     MySqlConnection? conn;
 
     try {
